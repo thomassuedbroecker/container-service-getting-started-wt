@@ -1,0 +1,186 @@
+#!/bin/bash
+# Information steps:
+# 1) chmod u+x git-commit.sh
+# 2) ./git-commit.sh
+
+#API_ENDPOINT="https://api.eu-de.bluemix.net"
+#SPACE_NAME="YOUR-CF-SPACE"
+API_ENDPOINT="https://api.eu-gb.bluemix.net"
+SPACE_NAME="OUR-CF-SPACE"
+
+IBMCLOUD_CLI_DEVOPS_PLATFORM_KEY="YOUR_PLATFORM_KEY"
+USER_ID="YOUR-ID"
+RESOURCE_GROUP="default"
+ORGANIZATION_NAME="YOUR-ORG"
+
+KUBEVERSION_INSTALL="kubernetes-cli"
+BREW_KUBECLI_GITPAGE="https://github.com/Homebrew/homebrew-core/blob/master/Formula/kubernetes-cli.rb"
+
+#CONTAINER_REGISTRY="registry.eu-de.bluemix.net"
+CONTAINER_REGISTRY="registry.eu-gb.bluemix.net"
+CONTAINER_NAMESPACE="YOUR_SPACE"
+DOCKER_IMAGE_NAME="hello-world" #also used as service name
+
+#CLUSTER_NAME="YOUR_CLOUSTER_DE"
+#CLUSTER_REGION_SETTING="eu-central"
+CLUSTER_NAME="YOUR_CLOUSTER_UK"
+CLUSTER_REGION_SETTING="uk-south"
+
+# echo "Using IBM preconfigured bash for the installation"
+# curl -sL https://ibm.biz/idt-installer | bash
+# echo ""
+
+#Install the right Kubectl version
+#=================================
+#echo "Check kubectl version available on brew"
+#brew info kubernetes-cli
+#echo ""
+#echo "The brew cache"
+#brew --cache
+#echo ""
+#echo "Uninstall kubernetes-cli"
+#brew uninstall $KUBEVERSION_INSTALL --force
+#echo ""
+#echo "Find the right version on $BREW_KUBECLI_GITPAGE"
+#open $BREW_KUBECLI_GITPAGE
+#echo "Press any key"
+#read ANYKEY
+#echo ""
+#echo "Configuration of the needed kubectl version"
+## See here: https://stackoverflow.com/questions/3939651/how-to-modify-a-homebrew-formula
+#brew edit $KUBEVERSION_INSTALL
+#echo "Save and press any key"
+#read ANYKEY
+#echo ""
+#echo "Install $KUBEVERSION_INSTALL"
+#brew install $KUBEVERSION_INSTALL
+#echo ""
+
+
+echo "IBM Cloud CLI login"
+echo "*****************"
+bx login -u $USER_ID  -o $ORGANIZATION_NAME -apikey $IBMCLOUD_CLI_DEVOPS_PLATFORM_KEY -s $SPACE_NAME -g $RESOURCE_GROUP -a $API_ENDPOINT
+bx info
+echo ""
+echo "Logon to the container registry"
+echo "*****************"
+ibmcloud cr login
+echo ""
+echo "Add container registry name space $CONTAINER_NAMESPACE"
+echo "*****************"
+ibmcloud cr namespace-add $CONTAINER_NAMESPACE
+echo ""
+echo "List container registry name spaces"
+echo "*****************"
+ibmcloud cr namespace-list
+echo ""
+echo "Build docker image with tag"
+docker build --tag $CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME .
+echo ""
+echo "List docker images"
+echo "*****************"
+docker images
+echo ""
+echo "Push docker "
+echo "*****************"
+docker push $CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME
+echo ""
+echo "Set cluster region settings $CLUSTER_REGION_SETTING"
+echo "*****************"
+ibmcloud cs region-set $CLUSTER_REGION_SETTING
+echo ""
+echo "List clusters with cs"
+echo "*****************"
+ibmcloud cs clusters
+echo "List clusters with ks"
+echo "*****************"
+ibmcloud ks clusters
+echo ""
+echo "List workers for cluster '$CLUSTER_NAME' "
+echo "*****************"
+ibmcloud ks workers $CLUSTER_NAME
+echo ""
+echo "Get the configuration information"
+echo "*****************"
+bx cs cluster-get $CLUSTER_NAME --json
+echo ""
+echo "Get cluster configuration for '$CLUSTER_NAME' "
+echo "*****************"
+ibmcloud cs cluster-config $CLUSTER_NAME -admin
+echo ""
+echo "Copy and past the cluster configuration export path"
+echo "*****************"
+echo ""
+read CLUSTER_CONFIGURATION_PATH
+echo ""
+echo "Execution of the export"
+echo "*****************"
+$CLUSTER_CONFIGURATION_PATH
+echo ""
+echo "Show kubectl version"
+echo "*****************"
+kubectl version
+echo ""
+echo "Kubectl get deployment for $DOCKER_IMAGE_NAME"
+echo "*****************"
+kubectl get deployment $DOCKER_IMAGE_NAME
+echo ""
+echo "Kubectl DELETE deployment for $DOCKER_IMAGE_NAME"
+echo "*****************"
+#kubectl delete deployment $DOCKER_IMAGE_NAME --namepace=default
+kubectl delete deployment $DOCKER_IMAGE_NAME
+echo ""
+echo "kubectl run image $DOCKER_IMAGE_NAME"
+echo "*****************"
+kubectl run $DOCKER_IMAGE_NAME --image=$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME
+echo ""
+echo "kubectl get pods"
+echo "*****************"
+STOP="move-on"
+END="stop"
+while [ "$STOP" != "$END" ]
+do
+  echo "------"
+  kubectl get pods
+  echo "------"
+  echo "When the status of the image '$DOCKER_IMAGE_NAME' is 'running' enter: 'stop' otherwise press 'enter'"
+  read STOP
+  echo ""
+done
+echo "kubectl expose"
+echo "*****************"
+echo "Enter Type for example 'NodePort'"
+read NODEPORT
+echo "Port for example '8080'"
+read PORT
+echo ""
+echo "Do expose $DOCKER_IMAGE_NAME"
+kubectl expose deployment/$DOCKER_IMAGE_NAME --type=$NODEPORT  --port=$PORT
+echo ""
+echo "Examine your new service"
+echo ""
+kubectl describe service $DOCKER_IMAGE_NAME
+echo ""
+echo "Enter the NodePort value of the service $CLUSTER_NAME:"
+read NODEPORT_VALUE
+echo ""
+echo "Now get the public IP from the running workers of the cluster $CLUSTER_NAME"
+ibmcloud cs workers $CLUSTER_NAME
+echo ""
+echo "Enter Public IP and press enter"
+read PUBLIC_IP
+echo ""
+echo "Now the app is running on cluster $CLUSTER_NAME and you can access the app in the browser"
+echo "Using 'http://$PUBLIC_IP:$NODEPORT_VALUE'"
+echo "Press any key to open the browser"
+echo "*****************"
+read ANYKEY
+open "http://$PUBLIC_IP:$NODEPORT_VALUE"
+
+
+# bx cr build -t registry.eu-de.bluemix.net/pattern/deploy-react-kubernetes .
+# bx cs cluster-config pattern-deploy-a-react-app -admin
+# kubectl get pods
+# kubectl expose deployment/deploy-react-kubernetes-deployment --type=NodePort --name=deploy-react-kubernetes-service —-port=3000
+# bx cs workers pattern-deploy-a-react-app
+# kubectl describe service deploy-react-kubernetes-service
