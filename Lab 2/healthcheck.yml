@@ -13,7 +13,8 @@ spec:
     spec:
       containers:
         - name: hw-demo-container
-          image: "registry.ng.bluemix.net/<namespace>/hello-world:2"
+          # image: "registry.ng.bluemix.net/<namespace>/hello-world:2"
+          image: "registry.eu-gb.bluemix.net/kubelab01/hello-world:2"
           imagePullPolicy: Always
           livenessProbe:
             httpGet:

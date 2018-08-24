@@ -26,6 +26,9 @@ DOCKER_IMAGE_NAME="hello-world" #also used as service name
 CLUSTER_NAME="YOUR_CLOUSTER_UK"
 CLUSTER_REGION_SETTING="uk-south"
 
+STOP="move-on"
+END="stop"
+
 # echo "Using IBM preconfigured bash for the installation"
 # curl -sL https://ibm.biz/idt-installer | bash
 # echo ""
@@ -56,7 +59,10 @@ CLUSTER_REGION_SETTING="uk-south"
 #brew install $KUBEVERSION_INSTALL
 #echo ""
 
-
+echo "**********************"
+echo "******* LAB 1 ********"
+echo "**********************"
+echo ""
 echo "IBM Cloud CLI login"
 echo "*****************"
 bx login -u $USER_ID  -o $ORGANIZATION_NAME -apikey $IBMCLOUD_CLI_DEVOPS_PLATFORM_KEY -s $SPACE_NAME -g $RESOURCE_GROUP -a $API_ENDPOINT
@@ -81,7 +87,7 @@ echo "List docker images"
 echo "*****************"
 docker images
 echo ""
-echo "Push docker "
+echo "Push docker image into $CONTAINER_REGISTRY/$CONTAINER_NAMESPACE"
 echo "*****************"
 docker push $CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME
 echo ""
@@ -138,9 +144,10 @@ echo "kubectl get pods"
 echo "*****************"
 STOP="move-on"
 END="stop"
+i=0
 while [ "$STOP" != "$END" ]
 do
-  echo "------"
+  echo "--- While loop: ($((i++))) ---"
   kubectl get pods
   echo "------"
   echo "When the status of the image '$DOCKER_IMAGE_NAME' is 'running' enter: 'stop' otherwise press 'enter'"
@@ -176,11 +183,81 @@ echo "Press any key to open the browser"
 echo "*****************"
 read ANYKEY
 open "http://$PUBLIC_IP:$NODEPORT_VALUE"
+echo "Press any key to move on with the next lab"
+echo "*****************"
+read ANYKEY
+echo ""
+echo "**********************"
+echo "******* LAB 2 ********"
+echo "Scale apps with replicas"
+echo "**********************"
+echo ""
+echo "Now edit the deployment YAML by changing the 'replicas:' to 10' press 'enter' to open the deployment"
+echo "Here is a VI http://www.atmos.albany.edu/daes/atmclasses/atm350/vi_cheat_sheet.pdfBM "
+echo "*****************"
+read ANYKEY
+kubectl edit deployment/$DOCKER_IMAGE_NAME
+echo "Press any key to move on"
+echo "*****************"
+read ANYKEY
+echo ""
+echo "Getting the rollout status 'kubectl rollout status deployment/$DOCKER_IMAGE_NAME''"
+echo "*****************"
+kubectl rollout status deployment/$DOCKER_IMAGE_NAME
+echo "kubectl get pods"
+echo "*****************"
+i=0
+while [ "$STOP" != "$END" ]
+do
+  echo "--- While loop: ($((i++))) ---"
+  kubectl get pods
+  echo "------"
+  echo "When the status of the pods '$DOCKER_IMAGE_NAME' are 'running' enter: 'stop' otherwise press 'enter'"
+  read STOP
+  echo ""
+done
+echo "Build and push docker images with tag"
+echo "*****************"
+i=1
+while [ 3 -gt $i ]
+do
+  echo "------"
+  echo "build container '$i': '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i'"
+  docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i"  "."
+  echo "push container '$i': '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i'"
+  docker push "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i"
+  echo "--- '$i': While loop (build and push image to registry): (($((i++))) ---"
+done
 
-
-# bx cr build -t registry.eu-de.bluemix.net/pattern/deploy-react-kubernetes .
-# bx cs cluster-config pattern-deploy-a-react-app -admin
-# kubectl get pods
-# kubectl expose deployment/deploy-react-kubernetes-deployment --type=NodePort --name=deploy-react-kubernetes-service —-port=3000
-# bx cs workers pattern-deploy-a-react-app
-# kubectl describe service deploy-react-kubernetes-service
+echo "**********************"
+echo "******* LAB 2 ********"
+echo "Update and roll back apps current section"
+echo "**********************"
+echo ""
+echo "kubectl SET IMAGE deployment with for '$DOCKER_IMAGE_NAME' tag '$i'"
+echo "** 'deployment/$DOCKER_IMAGE_NAME'"
+echo "** '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i'"
+echo "*****************"
+# https://www.mankier.com/1/kubectl-set-image
+kubectl set image "deployment/$DOCKER_IMAGE_NAME" "$DOCKER_IMAGE_NAME=$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i"
+echo ""
+echo "Getting the rollout status 'kubectl rollout status deployment/$DOCKER_IMAGE_NAME''"
+echo "*****************"
+kubectl rollout status deployment/$DOCKER_IMAGE_NAME
+i=1
+while [ "$STOP" != "$END" ]
+do
+  echo "--- While loop: ($((i++))) --"
+  kubectl get replicasets
+  echo "------"
+  echo "Status of the replicasets '$DOCKER_IMAGE_NAME' are 'running' enter: 'stop' otherwise press 'enter'"
+  read STOP
+  echo ""
+done
+echo "Confirm that your new code is active '$PUBLIC_IP:$NODEPORT_VALUE"
+echo "*****************"
+curl $PUBLIC_IP:$NODEPORT_VALUE
+echo ""
+echo "Undo rollout 'deployment/$DOCKER_IMAGE_NAME'"
+echo "*****************"
+kubectl rollout undo deployment/$DOCKER_IMAGE_NAME
