@@ -31,9 +31,12 @@ CLUSTER_NAME="paid-test-cluster-uk"
 CLUSTER_REGION_SETTING="uk-south"
 
 echo "**********************"
-echo "******* LAB 2.3 ********"
+echo "******* LAB 3 ********"
 echo "**********************"
 echo ""
+# *****************
+# CLOUD LOGIN
+# *****************
 echo "IBM Cloud CLI login"
 echo "*****************"
 bx login -u $USER_ID  -o $ORGANIZATION_NAME -apikey $IBMCLOUD_CLI_DEVOPS_PLATFORM_KEY -s $SPACE_NAME -g $RESOURCE_GROUP -a $API_ENDPOINT
@@ -83,6 +86,9 @@ echo "Show kubectl version"
 echo "*****************"
 kubectl version
 echo ""
+# *****************
+# CLOUD BUILD FIRST IMAGE and DEPLOY to Registry
+# *****************
 pwd
 cd ./watson
 pwd
@@ -91,6 +97,9 @@ echo "build waston image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAG
 docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W" "./watson"
 echo "push waston image:: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W'"
 echo ""
+# *****************
+# CLOUD BUILD SECOND IMAGE and DEPLOY to Registry
+# *****************
 pwd
 cd ..
 cd ./watson_talk
@@ -100,9 +109,38 @@ docker push "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W"
 echo "build waston talk image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT'"
 docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT" "./watson-talk"
 echo "push watson talk image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W'"
+# *****************
+# CLOUD CREATE A SERVICE
+# *****************
 echo "Set CF Target"
 ibmcloud target -o $ORGANIZATION_NAME -s $SPACE_NAME
 echo ""
+# *****************
+# CHECK EXISTING SERVICES AND DELETE IN NEEDED
+# *****************
+echo "Check existing services '$WATSON_SERVICE_NAME'"
+ibmcloud cf services
+# How to handle scrects https://kubernetes.io/docs/concepts/configuration/secret/
+echo "Find existing cluster services"
+ibmcloud ks cluster-services $CLUSTER_NAME
+echo "Find existing cluster secrets"
+kubectl get secrets
+echo "Get the secrect for the $WATSON_SERVICE_NAME"
+echo "Enter name of the secrect to display details"
+read SECRET_NAME
+kubectl describe secrets/$SECRET_NAME
+echo "Delete secrect $SECRET_NAME"
+kubectl delete secret $SECRET_NAME
+echo "Enter service Instance GUID for $WATSON_SERVICE_NAME"
+read SERVICE_GUID
+ibmcloud ks cluster-service-unbind --cluster $CLUSTER_NAME --namespace default --service "SERVICE_GUID"
+echo ""
+echo "Press any key to move on"
+read ANYKEY
+echo ""
+# *****************
+# CREATE A WATSON SERVICE AND BIND TO THE CLUSTER
+# *****************
 echo "Create Watson service"
 ibmcloud cf create-service tone_analyzer standard "$WATSON_SERVICE_NAME"
 echo ""
@@ -115,9 +153,19 @@ echo ""
 echo "Bind Watson service '$WATSON_SERVICE_NAME' to cluster $CLUSTER_NAME"
 ibmcloud cs cluster-service-bind $CLUSTER_NAME default "$WATSON_SERVICE_NAME"
 echo ""
+# *****************
+# CONFIGURE THE DEPLOYMENT unsing the needed scrects for the binding of the service
+# *****************
 echo "kubectl get secrets"
 kubectl get secrets
+echo ""
 echo "Insert Screct in the watson-deployment.yml file under 'volumes:- name: secret: secretName: xxxx'"
-open "$WATSON_LAB3_DEPLOYMENT_YML"
+open "$WATSON_LAB3_DEPLOYMENT"
+echo "Press any key to move on"
+read ANYKEY
+echo ""
 echo "Deploy Lab 03"
 kubectl create -f $WATSON_LAB3_DEPLOYMENT
+echo ""
+echo "Verify external IP on the running Pods on cluster $CLUSTER_NAME"
+kubectl get pods
