@@ -221,12 +221,12 @@ echo "*****************"
 i=1
 while [ 3 -gt $i ]
 do
-  echo "------"
-  echo "build container '$i': '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i'"
-  docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i"  "."
-  echo "push container '$i': '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i'"
+  echo "--- While loop (build and push image to registry): (($((i++))) ---"
+  echo "build container $i '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i'"
+  docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i" "."
+  echo "push container $i'$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i'"
   docker push "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i"
-  echo "--- '$i': While loop (build and push image to registry): (($((i++))) ---"
+  echo "------"
 done
 
 echo "**********************"
@@ -258,6 +258,6 @@ echo "Confirm that your new code is active '$PUBLIC_IP:$NODEPORT_VALUE"
 echo "*****************"
 curl $PUBLIC_IP:$NODEPORT_VALUE
 echo ""
-echo "Undo rollout 'deployment/$DOCKER_IMAGE_NAME'"
+echo "Undo rollout deployment/$DOCKER_IMAGE_NAME''"
 echo "*****************"
 kubectl rollout undo deployment/$DOCKER_IMAGE_NAME

@@ -79,7 +79,31 @@ echo ""
 echo "Show kubectl version"
 echo "*****************"
 kubectl version
+echo "build container 2: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:2'"
+docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:2" "."
+echo "push container 2: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:2'"
+docker push "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:2"
 echo ""
+echo "kubectl SET IMAGE deployment with for '$DOCKER_IMAGE_NAME' tag '$i'"
+echo "** 'deployment/$DOCKER_IMAGE_NAME'"
+echo "** '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:$i'"
+echo "*****************"
+# https://www.mankier.com/1/kubectl-set-image
+kubectl set image "deployment/$DOCKER_IMAGE_NAME" "$DOCKER_IMAGE_NAME=$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME:2"
+echo ""
+echo "Getting the rollout status 'kubectl rollout status deployment/$DOCKER_IMAGE_NAME''"
+echo "*****************"
+kubectl rollout status deployment/$DOCKER_IMAGE_NAME
+i=1
+while [ "$STOP" != "$END" ]
+do
+  echo "--- While loop: ($((i++))) --"
+  kubectl get replicasets
+  echo "------"
+  echo "Status of the replicasets '$DOCKER_IMAGE_NAME' are 'running' enter: 'stop' otherwise press 'enter'"
+  read STOP
+  echo ""
+done
 echo "Apply a new Configuration to Cluster $CLUSTER_NAME"
 echo "*****************"
 echo ""
@@ -95,7 +119,7 @@ kubectl describe service $DOCKER_IMAGE_NAME
 echo "Enter the NodePort value of the service $CLUSTER_NAME:"
 read NODEPORT_VALUE
 echo ""
-echo "ow get the public IP from the running workers of the cluster $CLUSTER_NAME"
+echo "Now get the public IP from the running workers of the cluster $CLUSTER_NAME"
 echo ""
 ibmcloud cs workers $CLUSTER_NAME
 echo ""

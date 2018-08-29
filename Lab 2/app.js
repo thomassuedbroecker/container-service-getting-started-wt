@@ -10,12 +10,15 @@ app.get('/', function(req, res) {
   res.send('Hello world from ' + hostname + '! Great job getting the second stage up and running!\n')
 })
 app.get('/healthz', function(req, res) {
+  var message = "Timeout, Health check error! - DELAY is greater than " + delay.toString;
+
   if ((Date.now() - startTime) > delay) {
     res.status(500).send({
-      error: 'Timeout, Health check error!'
+      error: message
     })
   } else {
-    res.send('OK!')
+    message = "OK! - DELAY is less than " + delay.toString;
+    res.send('message')
   }
 })
 app.listen(8080, function() {

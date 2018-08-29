@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: watson
-          image: "registry.ng.bluemix.net/<namespace>/watson" # edit here!
+          image: "registry.eu-gb.bluemix.net/kubelab01/watson" # edit here!
           imagePullPolicy: Always
           volumeMounts:
             - mountPath: /opt/service-bind
@@ -21,7 +21,7 @@ spec:
         - name: service-bind-volume
           secret:
             defaultMode: 420
-            secretName: binding-tone
+            secretName: binding-lab3-toneanalyzer
 ---
 apiVersion: v1
 kind: Service
@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
         - name: watson-talk
-          image: "registry.ng.bluemix.net/<namespace>/watson-talk" # edit here!
+          image: "registry.eu-gb.bluemix.net/kubelab01/watson-talk" # edit here!
           imagePullPolicy: Always
 ---
 apiVersion: v1

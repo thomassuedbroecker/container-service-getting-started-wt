@@ -1,0 +1,274 @@
+IBMs-MBP-2:Lab 3 tsuedbroecker$ ./bx-login.sh
+**********************
+******* LAB 2.3 ********
+**********************
+
+IBM Cloud CLI login
+*****************
+API-Endpunkt: https://api.eu-gb.bluemix.net
+Authentifizieren...
+OK
+
+Als Ziel ausgewähltes Konto Thomas Südbröcker's Account (641ebfffbac35c8385ee21d79b45279e) <-> 1602683
+
+Als Ziel ausgewählte Ressourcengruppe default
+
+Adressierte Cloud Foundry-Instanz (https://api.eu-gb.bluemix.net)
+
+Adressierte Organisation thomas.suedbroecker.2@de.ibm.com
+
+Adressierter Bereich 99-Kubernetes
+
+
+API-Endpunkt:       https://api.eu-gb.bluemix.net
+Region:             eu-gb
+Benutzer:           thomas.suedbroecker@de.ibm.com
+Konto:              Thomas Südbröcker's Account (641ebfffbac35c8385ee21d79b45279e) <-> 1602683
+Ressourcengruppe:   default
+CF-API-Endpunkt:    https://api.eu-gb.bluemix.net (API-Version: 2.106.0)
+Organisation:       thomas.suedbroecker.2@de.ibm.com
+Bereich:            99-Kubernetes
+Cloud-Informationen auflisten...
+
+API-Endpunkt:                    https://api.eu-gb.bluemix.net
+Authentifizierungsendpunkt:      https://iam.bluemix.net
+Konsolenendpunkt:                https://console.bluemix.net
+MCCP-Endpunkt:                   https://mccp.eu-gb.bluemix.net
+Region:                          eu-gb
+CLI-Mindestversion:              null
+Empfohlene CLI-Mindestversion:   null
+Neueste CLI-Version:             0.8.0
+
+Ziel-CF:
+API-Endpunkt:                        https://api.eu-gb.bluemix.net
+Build:                               1.19
+API-Version:                         2.106.0
+Berechtigungsendpunkt:               https://login.eu-gb.bluemix.net/UAALoginServerWAR
+UAA-Endpunkt:                        https://uaa.eu-gb.bluemix.net
+SSH-Endpunkt:                        ssh.eu-gb.bluemix.net:2222
+SSH-Hostschlüssel - Fingerabdruck:   c7:1f:89:2a:62:3b:78:a9:08:c9:33:81:fb:39:26:da
+SSH-OAuth-Client:                    ssh-proxy
+Routing-Endpunkt:                    null
+Doppler-Protokollierungsendpunkt:    wss://doppler.eu-gb.bluemix.net:443
+
+
+Logon to the container registry
+*****************
+Anmeldung bei 'registry.eu-gb.bluemix.net' wird ausgeführt...
+Bei 'registry.eu-gb.bluemix.net' angemeldet.
+
+OK
+
+Add container registry name space kubelab01
+*****************
+Namensbereich 'kubelab01' wird hinzugefügt...
+
+Der angeforderte Namensbereich gehört bereits zu Ihrem Konto.
+
+OK
+
+List container registry name spaces
+*****************
+Namensbereiche werden aufgeführt...
+
+Namensbereich
+c-reg-uk-namespace-todo
+kubelab01
+
+OK
+Set cluster region settings uk-south
+*****************
+OK
+
+List clusters with cs
+*****************
+OK
+Name                   ID                                 State    Created      Workers   Location   Version
+paid-test-cluster-uk   e4611187bbfd44078937af1af3a8c2c9   normal   4 days ago   2         London     1.9.9_1520*
+
+* update-cluster-message
+
+
+List workers for cluster 'paid-test-cluster-uk'
+*****************
+OK
+ID                                                 Public IP       Private IP      Machine Type        State    Status   Zone    Version
+kube-lon02-cre4611187bbfd44078937af1af3a8c2c9-w1   159.8.188.249   10.112.235.5    u2c.2x4.encrypted   normal   Ready    lon02   1.9.9_1521*
+kube-lon02-cre4611187bbfd44078937af1af3a8c2c9-w2   159.8.188.254   10.112.235.11   u2c.2x4.encrypted   normal   Ready    lon02   1.9.9_1521*
+
+* update-message
+
+Get the configuration information
+*****************
+{
+    "location": "London",
+    "dataCenter": "lon02",
+    "multiAzCapable": true,
+    "vlans": null,
+    "worker_vlans": null,
+    "workerZones": [
+        "lon02"
+    ],
+    "id": "e4611187bbfd44078937af1af3a8c2c9",
+    "name": "paid-test-cluster-uk",
+    "region": "eu-gb",
+    "serverURL": "https://158.175.65.170:26736",
+    "state": "normal",
+    "createdDate": "2018-08-20T11:24:24+0000",
+    "modifiedDate": "2018-08-20T11:24:24+0000",
+    "workerCount": 2,
+    "isPaid": true,
+    "masterKubeVersion": "1.9.9_1520",
+    "targetVersion": "1.10.5_1517",
+    "ingressHostname": "paid-test-cluster-uk.eu-gb.containers.appdomain.cloud",
+    "ingressSecretName": "paid-test-cluster-uk",
+    "ownerEmail": "thomas.suedbroecker@de.ibm.com",
+    "logOrg": "",
+    "logOrgName": "",
+    "logSpace": "",
+    "logSpaceName": "",
+    "apiUser": "",
+    "monitoringURL": "https://metrics.eu-gb.bluemix.net/app/#/grafana4/dashboard/db/a-641ebfffbac35c8385ee21d79b45279e_ClusterMonitoringDashboard_v5?scopeId=a-641ebfffbac35c8385ee21d79b45279e\u0026?var-Account_ID=a_641ebfffbac35c8385ee21d79b45279e\u0026var-Cluster=paid-test-cluster-uk\u0026var-Namespace=default\u0026var-Pod_ID=All",
+    "addons": null,
+    "isTrusted": false,
+    "versionEOS": "",
+    "disableAutoUpdate": false
+}
+Get cluster configuration for 'paid-test-cluster-uk'
+*****************
+OK
+Die Konfiguration für paid-test-cluster-uk wurde erfolgreich heruntergeladen. Exportieren Sie die Umgebungsvariablen, um mit der Verwendung von Kubernetes zu beginnen.
+
+export KUBECONFIG=/Users/tsuedbroecker/.bluemix/plugins/container-service/clusters/paid-test-cluster-uk-admin/kube-config-lon02-paid-test-cluster-uk.yml
+
+Copy and past the cluster configuration export path
+*****************
+
+export KUBECONFIG=/Users/tsuedbroecker/.bluemix/plugins/container-service/clusters/paid-test-cluster-uk-admin/kube-config-lon02-paid-test-cluster-uk.yml
+
+Execution of the export
+*****************
+
+Show kubectl version
+*****************
+Client Version: version.Info{Major:"1", Minor:"9", GitVersion:"v1.9.6", GitCommit:"9f8ebd171479bec0ada837d7ee641dec2f8c6dd1", GitTreeState:"clean", BuildDate:"2018-03-21T20:49:12Z", GoVersion:"go1.9.4", Compiler:"gc", Platform:"darwin/amd64"}
+Server Version: version.Info{Major:"1", Minor:"9", GitVersion:"v1.9.9+IKS", GitCommit:"479fe77000532aed9b590726896fedcf95cc8ac0", GitTreeState:"clean", BuildDate:"2018-07-19T04:08:00Z", GoVersion:"go1.9.3", Compiler:"gc", Platform:"linux/amd64"}
+
+/Users/tsuedbroecker/Documents/tsuedbro/MobileBluemix/dev/code_patterns/kubernetes-lab/container-service-getting-started-wt/Lab 3
+/Users/tsuedbroecker/Documents/tsuedbro/MobileBluemix/dev/code_patterns/kubernetes-lab/container-service-getting-started-wt/Lab 3/watson
+
+build waston image: 'registry.eu-gb.bluemix.net/kubelab01/watson'
+unable to prepare context: path "./watson" not found
+push waston image:: 'registry.eu-gb.bluemix.net/kubelab01/watson'
+
+/Users/tsuedbroecker/Documents/tsuedbro/MobileBluemix/dev/code_patterns/kubernetes-lab/container-service-getting-started-wt/Lab 3/watson
+./bx-login.sh: line 94: cd: ./watson_talk: No such file or directory
+/Users/tsuedbroecker/Documents/tsuedbro/MobileBluemix/dev/code_patterns/kubernetes-lab/container-service-getting-started-wt/Lab 3
+
+The push refers to repository [registry.eu-gb.bluemix.net/kubelab01/watson]
+An image does not exist locally with the tag: registry.eu-gb.bluemix.net/kubelab01/watson
+build waston talk image: 'registry.eu-gb.bluemix.net/kubelab01/watson-talk'
+Sending build context to Docker daemon   5.12kB
+Step 1/6 : FROM node:9.4.0-alpine
+ ---> b5f94997f35f
+Step 2/6 : COPY app.js .
+ ---> Using cache
+ ---> 90ed4587e86b
+Step 3/6 : COPY package.json .
+ ---> Using cache
+ ---> 840aaf70e823
+Step 4/6 : RUN npm install &&    apk update &&    apk upgrade
+ ---> Using cache
+ ---> 2aebcb4df18c
+Step 5/6 : EXPOSE  8080
+ ---> Using cache
+ ---> cff24ed33b85
+Step 6/6 : CMD node app.js
+ ---> Using cache
+ ---> 593a462fda2f
+Successfully built 593a462fda2f
+Successfully tagged registry.eu-gb.bluemix.net/kubelab01/watson-talk:latest
+push watson talk image: 'registry.eu-gb.bluemix.net/kubelab01/watson'
+Set CF Target
+Adressierte Organisation thomas.suedbroecker.2@de.ibm.com
+
+Adressierter Bereich 99-Kubernetes
+
+
+
+API-Endpunkt:       https://api.eu-gb.bluemix.net
+Region:             eu-gb
+Benutzer:           thomas.suedbroecker@de.ibm.com
+Konto:              Thomas Südbröcker's Account (641ebfffbac35c8385ee21d79b45279e) <-> 1602683
+Ressourcengruppe:   default
+CF-API-Endpunkt:    https://api.eu-gb.bluemix.net (API-Version: 2.106.0)
+Organisation:       thomas.suedbroecker.2@de.ibm.com
+Bereich:            99-Kubernetes
+Create Watson service
+Aufrufen von 'cf create-service tone_analyzer standard lab3_toneanalyzer'...
+
+Erstellen von Serviceinstanz lab3_toneanalyzer in Organisation thomas.suedbroecker.2@de.ibm.com / Bereich 99-Kubernetes als thomas.suedbroecker@de.ibm.com...
+OK
+Service lab3_toneanalyzer ist bereits vorhanden
+Check does Watson service exists 'lab3_toneanalyzer'
+Aufrufen von 'cf services'...
+
+Abrufen von Services in Organisation thomas.suedbroecker.2@de.ibm.com / Bereich 99-Kubernetes als thomas.suedbroecker@de.ibm.com...
+OK
+
+Name                                        Service                  Plan             Gebundene Apps   Letzte Operation
+DevOps_uk-gb_99_kubernets_ActivityTracker   accessTrail              free                              update war erfolgreich
+kubernetes-todo-cloudant                    cloudantNoSQLDB          Lite                              create war erfolgreich
+lab3_toneanalyzer                           tone_analyzer            standard                          create war erfolgreich
+libraray_TextToSpeech                       text_to_speech           lite             library-ui       create war erfolgreich
+library_AppID                               AppID                    Graduated tier   library-ui       create war erfolgreich
+library_Conversation                        conversation             free             library-ui       create war erfolgreich
+uk_99_kubernets_AvailabilityMonitoring      AvailabilityMonitoring   Lite             library-ui       create war erfolgreich
+uk_99_kubernets_LogAnalysis                 ibmLogAnalysis           standard         library-ui       update war erfolgreich
+uk_99_kubernets_Monitoring                  Monitoring               lite             library-ui       update war erfolgreich
+Show cluster resources paid-test-cluster-uk
+Retrieving cluster {{.Cluster}} and all its resources...
+OK
+
+
+Name:                   paid-test-cluster-uk
+ID:                     e4611187bbfd44078937af1af3a8c2c9
+State:                  normal
+Created:                2018-08-20T11:24:24+0000
+Location:               lon02
+Master URL:             https://158.175.65.170:26736
+Master Location:        London
+Ingress Subdomain:      paid-test-cluster-uk.eu-gb.containers.appdomain.cloud
+Ingress Secret:         paid-test-cluster-uk
+Workers:                2
+Worker Zones:           lon02
+Version:                1.9.9_1520* (1.10.5_1517 latest)
+Owner Email:            thomas.suedbroecker@de.ibm.com
+Monitoring Dashboard:   https://metrics.eu-gb.bluemix.net/app/#/grafana4/dashboard/db/a-641ebfffbac35c8385ee21d79b45279e_ClusterMonitoringDashboard_v5?scopeId=a-641ebfffbac35c8385ee21d79b45279e&?var-Account_ID=a_641ebfffbac35c8385ee21d79b45279e&var-Cluster=paid-test-cluster-uk&var-Namespace=default&var-Pod_ID=All
+
+*update-message
+
+
+Addons
+Name               Enabled
+basic-ingress-v2   true
+
+Subnet VLANs
+VLAN ID   Subnet CIDR          Public   User-managed
+2415115   159.122.234.248/29   true     false
+2415117   10.113.41.224/29     false    false
+Bind Watson service 'lab3_toneanalyzer' to cluster paid-test-cluster-uk
+Binding service instance to namespace...
+FAILED
+
+The specified name for the IBM Cloud service instance is invalid. The format of the name must match the regex [a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)* (e.g. 'example.com'). Rename the service instance before binding it to the cluster.   (E0033)
+Incident ID: 0c8b0c3c-1891-4955-942f-b67e956eaf25
+
+kubectl get secrets
+NAME                                   TYPE                                  DATA      AGE
+bluemix-default-secret                 kubernetes.io/dockerconfigjson        1         4d
+bluemix-default-secret-international   kubernetes.io/dockerconfigjson        1         4d
+bluemix-default-secret-regional        kubernetes.io/dockerconfigjson        1         4d
+default-token-qrcvk                    kubernetes.io/service-account-token   3         4d
+paid-test-cluster-uk                   Opaque                                2         4d
+IBMs-MBP-2:Lab 3 tsuedbroecker$
