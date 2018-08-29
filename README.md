@@ -1,7 +1,38 @@
 <img src="https://ace-docs-production-red.ng.bluemix.net/docs/api/content/homepage/images/containerServiceIcon.svg" width="200"> <img src="https://kubernetes.io/images/favicon.png" width="200">
 # IBM Cloud Container Service lab
 
-# An introduction to containers
+This version contains some additional files, which should help to use bash files for the automation of the container deployment.
+
+The name of the automation bash script is **bx-login.sh** in the lab directories.
+
+I using follow structure for the configuration:
+
+```bash
+#API_ENDPOINT="https://api.eu-de.bluemix.net"
+#SPACE_NAME="03-kubernetes-playground"
+API_ENDPOINT="https://api.eu-gb.bluemix.net"
+SPACE_NAME="YOUR_SPACE"
+
+IBMCLOUD_CLI_DEVOPS_PLATFORM_KEY="YOUR_KEY"
+USER_ID="YOUR_ID"
+RESOURCE_GROUP="default"
+ORGANIZATION_NAME="YOUR_ORG"
+
+#CONTAINER_REGISTRY="registry.eu-de.bluemix.net"
+CONTAINER_REGISTRY="registry.eu-gb.bluemix.net"
+CONTAINER_NAMESPACE="YOUR_CONTAINERSPACE"
+DOCKER_IMAGE_NAME_WT="watson-talk" #also used as kube service name
+DOCKER_IMAGE_NAME_W="watson"
+
+WATSON_SERVICE_NAME="YOUR_SERVICE_NAME"
+WATSON_LAB3WATSON_LAB3_DEPLOYMENT_PATH_YML="YOUR_PATH"
+WATSON_LAB3_DEPLOYMENT="watson-deployment.yml"
+
+USER_HOME_DIRECTORY="YOUR_HOME"
+#CLUSTER_REGION_SETTING="eu-central"
+CLUSTER_NAME="YOUR_CLUSTERNAME"
+CLUSTER_REGION_SETTING="uk-south"
+```
 
 Hey, are you looking for a containers 101 course? Check out our [Docker Essentials](https://developer.ibm.com/courses/all/docker-essentials-extend-your-apps-with-containers/).
 
@@ -13,12 +44,12 @@ Watch this [video](https://www.youtube.com/watch?v=wlBhtc31I8c) to learn about p
 
 This lab is an introduction to using Docker containers on Kubernetes in the IBM Cloud Container Service. By the end of the course, you'll achieve these objectives:
 * Understand core concepts of Kubernetes
-* Build a Docker image and deploy an application on Kubernetes in the IBM Cloud Container Service 
+* Build a Docker image and deploy an application on Kubernetes in the IBM Cloud Container Service
 * Control application deployments, while minimizing your time with infrastructure management
-* Add AI services to extend your app 
+* Add AI services to extend your app
 * Secure and monitor your cluster and app
 
-# Prerequisites 
+# Prerequisites
 * A Pay-As-You-Go or Subscription [IBM Cloud account](https://console.bluemix.net/registration/)
 
 # Virtual machines
@@ -50,7 +81,7 @@ Containers allow you to share the host OS. This reduces duplication while still 
 
 # Get set up
 
-Before we dive into Kubernetes, you need to provision a cluster for your containerized app. Then you won't have to wait for it to be ready for the subsequent labs. 
+Before we dive into Kubernetes, you need to provision a cluster for your containerized app. Then you won't have to wait for it to be ready for the subsequent labs.
 
 1. You must install the CLIs per https://console.ng.bluemix.net/docs/containers/cs_cli_install.html. If you do not yet have these CLIs and the Kubernetes CLI, do [lab 0](https://github.com/IBM/container-service-getting-started-wt/tree/master/Lab%200) before starting the course.
 2. If you haven't already, provision a cluster. This can take a few minutes, so let it start first: `bx cs cluster-create --name <name-of-cluster>`
@@ -173,4 +204,3 @@ IBM Cloud provides the capability to run applications in containers on Kubernete
 [Lab 5](https://github.com/IBM/container-service-getting-started-wt/tree/master/Lab%205): This lab walks through securing your cluster and applications using network policies, and will later add leveraging tools like Vulnerability Advisor to secure images and manage security in your image registry.
 
 [Lab 6](https://github.com/IBM/container-service-getting-started-wt/tree/master/Lab%206): This lab walks through using Instana for CI/CD monitoring and network patrolling of your cluster.
-
