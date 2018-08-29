@@ -93,22 +93,39 @@ pwd
 cd ./watson
 pwd
 echo ""
-echo "build waston image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W'"
-docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W" "./watson"
-echo "push waston image:: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W'"
+echo "build watson image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W'"
+# docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W" "./watson"
+docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W" .
+echo "push watson image:: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W'"
+docker push "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W"
+echo ""
+echo "List existing images"
+ibmcloud cr image-list
 echo ""
 # *****************
 # CLOUD BUILD SECOND IMAGE and DEPLOY to Registry
 # *****************
 pwd
 cd ..
-cd ./watson_talk
+pwd
+cd ./watson-talk
 pwd
 echo ""
-docker push "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W"
-echo "build waston talk image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT'"
-docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT" "./watson-talk"
-echo "push watson talk image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_W'"
+echo "build watson talk image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT'"
+# docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT" "./watson-talk"
+docker build --tag "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT" .
+echo "push watson talk image: '$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT'"
+docker push "$CONTAINER_REGISTRY/$CONTAINER_NAMESPACE/$DOCKER_IMAGE_NAME_WT"
+echo ""
+echo "List existing images"
+ibmcloud cr image-list
+pwd
+cd ..
+pwd
+echo ""
+echo "Press any key to move on"
+read ANYKEY
+
 # *****************
 # CLOUD CREATE A SERVICE
 # *****************
